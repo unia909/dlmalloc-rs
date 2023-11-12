@@ -12,11 +12,13 @@ impl System {
 unsafe impl Allocator for System {
     fn alloc(&self, mut size: usize) -> (*mut u8, usize, u32) {
         let real_size = size;
-        core::arch::asm!(
-            "li x0, 7",
-            inout("a0") size,
-            options(pure, nomem, nostack)
-        );
+        unsafe {
+            core::arch::asm!(
+                "li x0, 7",
+                inout("a0") size,
+                options(pure, nomem, nostack)
+            );
+        }
         if size == u32::MAX as usize {
             return (ptr::null_mut(), 0, 0);
         }
